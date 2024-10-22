@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import useKeypress from "react-use-keypress";
 import type { ImageProps } from "../utils/types";
-import SharedModal from "./SharedModal";
 
 export default function Modal({
   images,
@@ -39,7 +38,7 @@ export default function Modal({
         query: { photoId: newVal },
       },
       `/p/${newVal}`,
-      { shallow: true },
+      { shallow: true }
     );
   }
 
@@ -70,14 +69,6 @@ export default function Modal({
         className="fixed inset-0 z-30 bg-black/70 backdrop-blur-2xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-      />
-      <SharedModal
-        index={curIndex}
-        direction={direction}
-        images={images}
-        changePhotoId={changePhotoId}
-        closeModal={handleClose}
-        navigation={true}
       />
     </Dialog>
   );
