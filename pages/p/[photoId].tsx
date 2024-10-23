@@ -1,10 +1,9 @@
-import type { GetStaticProps, NextPage } from "next";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import getResults from "../../utils/cachedImages";
-import cloudinary from "../../utils/cloudinary";
-import getBase64ImageUrl from "../../utils/generateBlurPlaceholder";
-import type { ImageProps } from "../../utils/types";
+import type { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import getResults from '../../utils/cachedImages';
+import getBase64ImageUrl from '../../utils/generateBlurPlaceholder';
+import type { ImageProps } from '../../utils/types';
 
 const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
   const router = useRouter();
@@ -16,10 +15,10 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
     <>
       <Head>
         <title>Next.js Conf 2022 Photos</title>
-        <meta property="og:image" content={currentPhotoUrl} />
-        <meta name="twitter:image" content={currentPhotoUrl} />
+        <meta property='og:image' content={currentPhotoUrl} />
+        <meta name='twitter:image' content={currentPhotoUrl} />
       </Head>
-      <main className="mx-auto max-w-[1960px] p-4">
+      <main className='mx-auto max-w-[1960px] p-4'>
         <img src={currentPhotoUrl} alt={currentPhoto.public_id} />
       </main>
     </>
@@ -28,7 +27,7 @@ const Home: NextPage = ({ currentPhoto }: { currentPhoto: ImageProps }) => {
 
 export default Home;
 
-export const getStaticProps: GetStaticProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const results = await getResults();
 
   let reducedResults: ImageProps[] = [];
@@ -54,23 +53,3 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   };
 };
-
-export async function getStaticPaths() {
-  const results = await cloudinary.v2.search
-    .expression(`folder:${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/*`)
-    .sort_by("public_id", "desc")
-    .max_results(400)
-    .execute();
-
-  let fullPaths = [];
-  for (let result of results.resources) {
-    fullPaths.push({
-      params: { photoId: result.filename },
-    });
-  }
-
-  return {
-    paths: fullPaths,
-    fallback: false,
-  };
-}
